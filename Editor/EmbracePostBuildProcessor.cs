@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using UnityEngine;
+using UnityEditor;
 
 #if UNITY_ANDROID
-using UnityEditor;
 using UnityEditor.Android;
-using UnityEditor.Callbacks;
 
 public class EmbracePostBuildProcessor : IPostGenerateGradleAndroidProject
 {
@@ -13,18 +12,26 @@ public class EmbracePostBuildProcessor : IPostGenerateGradleAndroidProject
     // Android gradle fixup
     public void OnPostGenerateGradleAndroidProject(string projectPath)
     {
+        string baseDirectory = EmbracePostBuildProcessorUtils.BaseDirectory();
         var rootDirPath = Path.GetDirectoryName(projectPath);
         var launcherParh = Path.Combine(rootDirPath, "launcher");
+
         // Add embrace config
-        FileInfo fileToCopy = new FileInfo("Packages/io.embrace.unity/Android/embrace-config.json");
-        var fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", launcherParh, "embrace-config.json"));
-        fileToCopy.CopyTo(fileInfo.FullName);
+        FileInfo fileToCopy = new FileInfo(baseDirectory + "/Android/embrace-config.json");
+        if (fileToCopy.Exists)
+        {
+            fileToCopy = new FileInfo(baseDirectory + "/Android/embrace-config.json");
+        }
+        if (fileToCopy.Exists)
+        {
+            var fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", launcherParh, "embrace-config.json"));
+            fileToCopy.CopyTo(fileInfo.FullName);
+        }
     }
 }
 #endif
 
 #if UNITY_IOS
-using UnityEditor;
 using UnityEditor.iOS.Xcode;
 using UnityEditor.iOS.Xcode.Extensions;
 using UnityEditor.Callbacks;
@@ -35,7 +42,8 @@ public class EmbracePostBuildProcessor
     [PostProcessBuild(1)]
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
-        string plistPath = "Packages/io.embrace.unity/iOS/Embrace-Info.plist";
+        string baseDirectory = EmbracePostBuildProcessorUtils.BaseDirectory();
+        string plistPath = baseDirectory + "/iOS/Embrace-Info.plist";
         string projectPath = pathToBuiltProject + "/Unity-iPhone.xcodeproj/project.pbxproj";
         PBXProject project = new PBXProject();
         project.ReadFromFile(projectPath);
@@ -53,7 +61,7 @@ public class EmbracePostBuildProcessor
         PlistElement apiKey = plist.root["API_KEY"];
         PlistElement apiToken = plist.root["API_TOKEN"];
         string runScriptName = "Embrace symbol upload";
-        string fullRunSHPath = new FileInfo("Packages/io.embrace.unity/iOS/run.sh").FullName;
+        string fullRunSHPath = new FileInfo(baseDirectory + "/iOS/run.sh").FullName;
 
         if (apiKey != null && apiToken != null)
         {
@@ -81,7 +89,7 @@ public class EmbracePostBuildProcessor
         project.AddFileToBuildSection(targetGuid, resourcesBuildPhase, resourcesFilesGuid);
 
         // Embed Embrace.framework
-        string framework = "Frameworks/io.embrace.unity/iOS/Embrace.framework";
+        string framework = baseDirectory + "/iOS/Embrace.framework";
         string fileGuid = project.FindFileGuidByProjectPath(framework);
         PBXProjectExtensions.AddFileToEmbedFrameworks(project, targetGuid, fileGuid);
 
@@ -89,3 +97,20 @@ public class EmbracePostBuildProcessor
     }
 }
 #endif
+
+public class EmbracePostBuildProcessorUtils
+{
+    public static string BaseDirectory()
+    {
+        if (Directory.Exists("Packages/io.embrace.unity"))
+        {
+            return "Packages/io.embrace.unity";
+        }
+        else if (Directory.Exists("Assets/Plugins/Embrace"))
+        {
+            return "Assets/Plugins/Embrace";
+        }
+        Debug.Log("Embrace dictionary not found");
+        return null;
+    }
+}
