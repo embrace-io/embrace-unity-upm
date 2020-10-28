@@ -18,15 +18,8 @@ public class EmbracePostBuildProcessor : IPostGenerateGradleAndroidProject
 
         // Add embrace config
         FileInfo fileToCopy = new FileInfo(baseDirectory + "/Android/embrace-config.json");
-        if (fileToCopy.Exists)
-        {
-            fileToCopy = new FileInfo(baseDirectory + "/Android/embrace-config.json");
-        }
-        if (fileToCopy.Exists)
-        {
-            var fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", launcherParh, "embrace-config.json"));
-            fileToCopy.CopyTo(fileInfo.FullName);
-        }
+        var fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", launcherParh, "embrace-config.json"));
+        fileToCopy.CopyTo(fileInfo.FullName);
     }
 }
 #endif
@@ -110,7 +103,7 @@ public class EmbracePostBuildProcessorUtils
         {
             return "Assets/Plugins/Embrace";
         }
-        Debug.Log("Embrace dictionary not found");
+        Debug.LogError("Embrace dictionary not found");
         return null;
     }
 }
