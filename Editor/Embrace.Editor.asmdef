@@ -1,0 +1,9 @@
+{
+    "name": "Embrace.Editor",
+    "references": [
+        "Embrace"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

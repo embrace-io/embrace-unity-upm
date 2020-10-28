@@ -1,0 +1,21 @@
+{
+    "app_id": "sazwW",
+    "api_token": "4c2ddd8d71d04592833b7b34689385a1",
+    "sdk_config": {
+        "networking": {
+            "capture_request_content_length": false
+        },
+        "startup_moment": {
+            "automatically_end": true
+        },
+        "taps": {
+            "capture_coordinates": true
+        },
+        "base_urls": {
+            "config": "http://192.168.0.159:3000/api",
+            "data": "http://192.168.0.159:3000/api",
+            "data_dev": "http://192.168.0.159:3000/api",
+            "images": "http://192.168.0.159:3000/api"
+          }
+    }
+}
