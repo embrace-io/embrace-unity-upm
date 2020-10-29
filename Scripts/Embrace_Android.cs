@@ -10,6 +10,7 @@ namespace EmbraceSDK
     {
         private AndroidJavaObject embraceSharedInstance;
         private AndroidJavaObject applicationInstance;
+        private AndroidJavaObject unityAppFramework;
         private AndroidJavaClass embraceClass;
 
         private const string _StartMethod = "start";
@@ -39,6 +40,7 @@ namespace EmbraceSDK
         private const string _StartFragmentMethod = "startFragment";
         private const string _EndFragmentMethod = "endFragment";
         private const string _ThrowExceptionMethod = "throwException";
+        private const string _SetUnityMetaDataMethod = "setUnityMetaData";
 
         // Java Map Reading
         IntPtr CollectionIterator;
@@ -91,12 +93,14 @@ namespace EmbraceSDK
             applicationInstance = activityInstance.Call<AndroidJavaObject>("getApplication");
             embraceClass = new AndroidJavaClass("io.embrace.android.embracesdk.Embrace");
             embraceSharedInstance = embraceClass.CallStatic<AndroidJavaObject>("getInstance");
+            AndroidJavaClass appFramework = new AndroidJavaClass("io.embrace.android.embracesdk.Embrace$AppFramework");
+            unityAppFramework = appFramework.GetStatic<AndroidJavaObject>("UNITY");
         }
 
-        void IEmbraceProvider.StartSDK()
+        void IEmbraceProvider.StartSDK(bool enableIntegrationTesting)
         {
             if (!ReadyForCalls()) { return; }
-            embraceSharedInstance.Call(_StartMethod, applicationInstance);
+            embraceSharedInstance.Call(_StartMethod, applicationInstance, enableIntegrationTesting, unityAppFramework);
         }
 
         void IEmbraceProvider.EndAppStartup(Dictionary<string, string> properties)
@@ -264,8 +268,8 @@ namespace EmbraceSDK
 
         void IEmbraceProvider.SetMetaData(string version, string guid)
         {
-            //TODO: call to native method
-            Debug.LogFormat("Embrace Unity SDK: Unity Version = {0} GUID = {1}", version, guid);
+            if (!ReadyForCalls()) { return; }
+            embraceSharedInstance.Call(_SetUnityMetaDataMethod, version, guid);
         }
 
         private AndroidJavaObject DictionaryToJavaMap(Dictionary<string, string> dictionary)

@@ -14,7 +14,7 @@ namespace EmbraceSDK
             Debug.Log("Embrace Unity SDK InitializeSDK");
         }
 
-        void IEmbraceProvider.StartSDK()
+        void IEmbraceProvider.StartSDK(bool enableIntegrationTesting)
         {
             Debug.Log("Embrace Unity SDK: StartSDK");
         }

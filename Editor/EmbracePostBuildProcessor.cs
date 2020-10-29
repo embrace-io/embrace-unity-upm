@@ -82,7 +82,7 @@ public class EmbracePostBuildProcessor
         project.AddFileToBuildSection(targetGuid, resourcesBuildPhase, resourcesFilesGuid);
 
         // Embed Embrace.framework
-        string framework = baseDirectory + "/iOS/Embrace.framework";
+        string framework = "Frameworks/io.embrace.unity/iOS/Embrace.framework";
         string fileGuid = project.FindFileGuidByProjectPath(framework);
         PBXProjectExtensions.AddFileToEmbedFrameworks(project, targetGuid, fileGuid);
 
@@ -95,15 +95,18 @@ public class EmbracePostBuildProcessorUtils
 {
     public static string BaseDirectory()
     {
-        if (Directory.Exists("Packages/io.embrace.unity"))
+        if (new DirectoryInfo("Packages/io.embrace.unity").Exists)
         {
             return "Packages/io.embrace.unity";
         }
-        else if (Directory.Exists("Assets/Plugins/Embrace"))
+        else if (new DirectoryInfo("Assets/Plugins/Embrace").Exists)
         {
             return "Assets/Plugins/Embrace";
         }
-        Debug.LogError("Embrace dictionary not found");
-        return null;
+        else
+        {
+            Debug.Log("Embrace dictionary not found");
+            return null;
+        }
     }
 }

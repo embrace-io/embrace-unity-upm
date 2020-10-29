@@ -93,7 +93,7 @@ namespace EmbraceSDK
             Debug.Log("Embrace Unity SDK initializing Objc objects");
         }
 
-        void IEmbraceProvider.StartSDK()
+        void IEmbraceProvider.StartSDK(bool enableIntegrationTesting)
         {
             embrace_sdk_start();
         }

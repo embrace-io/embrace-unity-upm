@@ -1,6 +1,7 @@
 {
     "app_id": "sazwW",
     "api_token": "4c2ddd8d71d04592833b7b34689385a1",
+    "ndk_enabled": true,
     "sdk_config": {
         "networking": {
             "capture_request_content_length": false

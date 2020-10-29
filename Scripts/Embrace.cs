@@ -9,7 +9,7 @@ namespace EmbraceSDK
         // does not start any montitoring or network calls
         void InitializeSDK();
         // Public API
-        void StartSDK();
+        void StartSDK(bool enableIntegrationTesting);
         void EndAppStartup(Dictionary<string, string> properties);
         void SetUserIdentifier(string identifier);
         void ClearUserIdentifier();
@@ -97,7 +97,12 @@ namespace EmbraceSDK
 
         public void StartSDK()
         {
-            provider.StartSDK();
+            StartSDK(false);
+        }
+
+        public void StartSDK(bool enableIntegrationTesting)
+        {
+            provider.StartSDK(enableIntegrationTesting);
             provider.SetMetaData(Application.unityVersion, Application.buildGUID);
         }
 
