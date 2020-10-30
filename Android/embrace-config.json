@@ -13,10 +13,10 @@
             "capture_coordinates": true
         },
         "base_urls": {
-            "config": "http://192.168.0.159:3000/api",
-            "data": "http://192.168.0.159:3000/api",
-            "data_dev": "http://192.168.0.159:3000/api",
-            "images": "http://192.168.0.159:3000/api"
+            "config.REMOVE_TO_SET": "http://192.168.0.159:3000/api",
+            "data.REMOVE_TO_SET": "http://192.168.0.159:3000/api",
+            "data_dev.REMOVE_TO_SET": "http://192.168.0.159:3000/api",
+            "images.REMOVE_TO_SET": "http://192.168.0.159:3000/api"
           }
     }
 }

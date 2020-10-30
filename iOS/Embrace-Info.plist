@@ -10,13 +10,13 @@
 	<true/>
 	<key>ENABLE_OS_LOG</key>
 	<true/>
-	<key>CONFIG_BASE_URL</key>
+	<key>CONFIG_BASE_URL.REMOVE_TO_SET</key>
 	<string>http://juanpablo.local:3000/api</string>
-	<key>DATA_BASE_URL</key>
+	<key>DATA_BASE_URL.REMOVE_TO_SET</key>
 	<string>http://juanpablo.local:3000/api</string>
-	<key>DATA_DEV_BASE_URL</key>
+	<key>DATA_DEV_BASE_URL.REMOVE_TO_SET</key>
 	<string>http://juanpablo.local:3000/api</string>
-	<key>IMAGES_BASE_URL</key>
+	<key>IMAGES_BASE_URL.REMOVE_TO_SET</key>
 	<string>http://juanpablo.local:3000/api</string>
 </dict>
 </plist>

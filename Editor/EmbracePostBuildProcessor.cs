@@ -36,8 +36,12 @@ public class EmbracePostBuildProcessor
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
         string baseDirectory = EmbracePostBuildProcessorUtils.BaseDirectory();
-        string plistPath = baseDirectory + "/iOS/Embrace-Info.plist";
+        FileInfo embracePlistFile = new FileInfo(baseDirectory + "/iOS/Embrace-Info.plist");
+        FileInfo embraceRunSHFile = new FileInfo(baseDirectory + "/iOS/run.sh");
         string projectPath = pathToBuiltProject + "/Unity-iPhone.xcodeproj/project.pbxproj";
+        string frameworkPath = "Frameworks/io.embrace.unity/iOS/Embrace.framework";
+
+        // Load pbxproj
         PBXProject project = new PBXProject();
         project.ReadFromFile(projectPath);
         string targetGuid = project.GetUnityMainTargetGuid();
@@ -48,17 +52,17 @@ public class EmbracePostBuildProcessor
         project.SetBuildPropertyForConfig(debugConfigGuid, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
         project.SetBuildPropertyForConfig(releaseConfigGuid, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
 
-        // Add phase for dSYM upload
+        // Load Embrace-Info.plist
         PlistDocument plist = new PlistDocument();
-        plist.ReadFromString(File.ReadAllText(plistPath));
+        plist.ReadFromFile(embracePlistFile.FullName);
         PlistElement apiKey = plist.root["API_KEY"];
         PlistElement apiToken = plist.root["API_TOKEN"];
-        string runScriptName = "Embrace symbol upload";
-        string fullRunSHPath = new FileInfo(baseDirectory + "/iOS/run.sh").FullName;
 
         if (apiKey != null && apiToken != null)
         {
-            string runScriptPhase = "EMBRACE_ID=" + apiKey.AsString() + " EMBRACE_TOKEN=" + apiToken.AsString() + " '" + fullRunSHPath + "'";
+            // Add phase for dSYM upload
+            string runScriptName = "Embrace Symbol Upload";
+            string runScriptPhase = "EMBRACE_ID=" + apiKey.AsString() + " EMBRACE_TOKEN=" + apiToken.AsString() + " '" + embraceRunSHFile.FullName + "'";
             string[] phases = project.GetAllBuildPhasesForTarget(targetGuid);
             bool embracePhaseExists = false;
             foreach (var item in phases)
@@ -75,15 +79,13 @@ public class EmbracePostBuildProcessor
             }
         }
 
-        // Add Embrace-Info.plist
-        string embraceInfoPlist = new FileInfo(plistPath).FullName;
+        // Copy Embrace-Info.plist
         string resourcesBuildPhase = project.GetResourcesBuildPhaseByTarget(targetGuid);
-        string resourcesFilesGuid = project.AddFile(embraceInfoPlist, "/Embrace-Info.plist", PBXSourceTree.Source);
+        string resourcesFilesGuid = project.AddFile(embracePlistFile.FullName, "/Embrace-Info.plist", PBXSourceTree.Source);
         project.AddFileToBuildSection(targetGuid, resourcesBuildPhase, resourcesFilesGuid);
 
         // Embed Embrace.framework
-        string framework = "Frameworks/io.embrace.unity/iOS/Embrace.framework";
-        string fileGuid = project.FindFileGuidByProjectPath(framework);
+        string fileGuid = project.FindFileGuidByProjectPath(frameworkPath);
         PBXProjectExtensions.AddFileToEmbedFrameworks(project, targetGuid, fileGuid);
 
         project.WriteToFile(projectPath);
