@@ -1,6 +1,6 @@
 {
-    "app_id": "sazwW",
-    "api_token": "4c2ddd8d71d04592833b7b34689385a1",
+    "app_id": "USE_REAL_KEY",
+    "api_token": "USE_REAL_TOKEN",
     "ndk_enabled": true,
     "sdk_config": {
         "networking": {
@@ -11,12 +11,6 @@
         },
         "taps": {
             "capture_coordinates": true
-        },
-        "base_urls": {
-            "config.REMOVE_TO_SET": "http://192.168.0.159:3000/api",
-            "data.REMOVE_TO_SET": "http://192.168.0.159:3000/api",
-            "data_dev.REMOVE_TO_SET": "http://192.168.0.159:3000/api",
-            "images.REMOVE_TO_SET": "http://192.168.0.159:3000/api"
-          }
+        }
     }
 }
