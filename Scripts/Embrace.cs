@@ -95,18 +95,13 @@ namespace EmbraceSDK
             Debug.LogError("null is not allowed through the Embrace SDK.");
         }
 
-        public void StartSDK()
-        {
-            StartSDK(false);
-        }
-
-        public void StartSDK(bool enableIntegrationTesting)
+        public void StartSDK(bool enableIntegrationTesting = false)
         {
             provider.StartSDK(enableIntegrationTesting);
             provider.SetMetaData(Application.unityVersion, Application.buildGUID);
         }
 
-        public void EndAppStartup(Dictionary<string, string> properties)
+        public void EndAppStartup(Dictionary<string, string> properties = null)
         {
             if (properties == null)
             {
@@ -197,7 +192,7 @@ namespace EmbraceSDK
             return properties;
         }
 
-        public void StartMoment(string name, string identifier, bool allowScreenshot, Dictionary<string, string> properties)
+        public void StartMoment(string name, string identifier = null, bool allowScreenshot = true, Dictionary<string, string> properties = null)
         {
             if (name == null) { NoNullsError(); return; }
             if (properties == null)
@@ -207,7 +202,7 @@ namespace EmbraceSDK
             provider.StartMoment(name, identifier, allowScreenshot, properties);
         }
 
-        public void EndMoment(string name, string identifier, Dictionary<string, string> properties)
+        public void EndMoment(string name, string identifier = null, Dictionary<string, string> properties = null)
         {
             if (name == null) { NoNullsError(); return; }
             if (properties == null)
@@ -217,7 +212,7 @@ namespace EmbraceSDK
             provider.EndMoment(name, identifier, properties);
         }
 
-        public void LogMessage(string message, EMBSeverity severity, Dictionary<string, string> properties, bool allowScreenshot)
+        public void LogMessage(string message, EMBSeverity severity, Dictionary<string, string> properties = null, bool allowScreenshot = false)
         {
             if (message == null) { NoNullsError(); return; }
             if (properties == null)
@@ -233,7 +228,7 @@ namespace EmbraceSDK
             provider.LogBreadcrumb(message);
         }
 
-        public void EndSession(bool clearUserInfo)
+        public void EndSession(bool clearUserInfo = false)
         {
             provider.EndSession(clearUserInfo);
         }
