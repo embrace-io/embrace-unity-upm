@@ -39,7 +39,6 @@ public class EmbracePostBuildProcessor
         FileInfo embracePlistFile = new FileInfo(baseDirectory + "/iOS/Embrace-Info.plist");
         FileInfo embraceRunSHFile = new FileInfo(baseDirectory + "/iOS/run.sh");
         string projectPath = pathToBuiltProject + "/Unity-iPhone.xcodeproj/project.pbxproj";
-        string frameworkPath = "Frameworks/io.embrace.unity/iOS/Embrace.framework";
 
         // Load pbxproj
         PBXProject project = new PBXProject();
@@ -83,10 +82,6 @@ public class EmbracePostBuildProcessor
         string resourcesBuildPhase = project.GetResourcesBuildPhaseByTarget(targetGuid);
         string resourcesFilesGuid = project.AddFile(embracePlistFile.FullName, "/Embrace-Info.plist", PBXSourceTree.Source);
         project.AddFileToBuildSection(targetGuid, resourcesBuildPhase, resourcesFilesGuid);
-
-        // Embed Embrace.framework
-        string fileGuid = project.FindFileGuidByProjectPath(frameworkPath);
-        PBXProjectExtensions.AddFileToEmbedFrameworks(project, targetGuid, fileGuid);
 
         project.WriteToFile(projectPath);
     }
