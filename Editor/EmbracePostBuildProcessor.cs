@@ -86,6 +86,11 @@ public class EmbracePostBuildProcessor
 
         // Embed Embrace.framework
         string fileGuid = project.FindFileGuidByProjectPath(frameworkPath);
+        // fallback for upm mode:
+        if (fileGuid == null) {
+            frameworkPath = "Frameworks/io.embrace.unity/iOS/Embrace.xcframework/ios-arm64_armv7/Embrace.framework";
+            fileGuid = project.FindFileGuidByProjectPath(frameworkPath);
+        }
         PBXProjectExtensions.AddFileToEmbedFrameworks(project, targetGuid, fileGuid);
 
         project.WriteToFile(projectPath);
