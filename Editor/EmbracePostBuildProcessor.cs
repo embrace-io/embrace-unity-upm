@@ -31,6 +31,20 @@ using UnityEditor.Callbacks;
 
 public class EmbracePostBuildProcessor
 {
+// In Unity 2019.3 the iOS target was split into two targets, a launcher and the framework.
+// We have to be able to integrate with both target setups.
+#if UNITY_2019_3_OR_NEWER
+    private static string GetProjectName(PBXProject project)
+    {
+        return project.GetUnityMainTargetGuid();
+    }
+#else
+    private static string GetProjectName(PBXProject project)
+    {
+        return project.TargetGuidByName(PBXProject.GetUnityTargetName()); ;
+    }
+#endif
+
     // iOS Xcode project fixup
     [PostProcessBuild(1)]
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
@@ -44,7 +58,7 @@ public class EmbracePostBuildProcessor
         // Load pbxproj
         PBXProject project = new PBXProject();
         project.ReadFromFile(projectPath);
-        string targetGuid = project.GetUnityMainTargetGuid();
+        string targetGuid = GetProjectName(project);
 
         // Enable dSYM
         string debugConfigGuid = project.BuildConfigByName(targetGuid, "Debug");
@@ -86,6 +100,12 @@ public class EmbracePostBuildProcessor
 
         // Embed Embrace.framework
         string fileGuid = project.FindFileGuidByProjectPath(frameworkPath);
+        // fallback for SDK naming
+        if (fileGuid == null)
+        {
+            frameworkPath = "Frameworks/Plugins/EmbraceSDK/iOS/Embrace.xcframework/ios-arm64_armv7/Embrace.framework";
+            fileGuid = project.FindFileGuidByProjectPath(frameworkPath);
+        }
         // fallback for upm mode:
         if (fileGuid == null) {
             frameworkPath = "Frameworks/io.embrace.unity/iOS/Embrace.xcframework/ios-arm64_armv7/Embrace.framework";
@@ -109,6 +129,10 @@ public class EmbracePostBuildProcessorUtils
         else if (new DirectoryInfo("Assets/Plugins/Embrace").Exists)
         {
             return "Assets/Plugins/Embrace";
+        }
+        else if (new DirectoryInfo("Assets/Plugins/EmbraceSDK").Exists)
+        {
+            return "Assets/Plugins/EmbraceSDK";
         }
         else
         {
