@@ -13,12 +13,19 @@ public class EmbracePostBuildProcessor : IPostGenerateGradleAndroidProject
     public void OnPostGenerateGradleAndroidProject(string projectPath)
     {
         string baseDirectory = EmbracePostBuildProcessorUtils.BaseDirectory();
-        var rootDirPath = Path.GetDirectoryName(projectPath);
-        var launcherParh = Path.Combine(rootDirPath, "launcher");
 
         // Add embrace config
         FileInfo fileToCopy = new FileInfo(baseDirectory + "/Android/embrace-config.json");
-        var fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", launcherParh, "embrace-config.json"));
+#if UNITY_2019_3_OR_NEWER
+        FileInfo fileInfo = new FileInfo(string.Format("{0}/launcher/src/main/{1}", projectPath, "embrace-config.json"));
+        if (fileInfo.Directory.Exists == false)
+        {
+            projectPath = Directory.GetParent(projectPath).FullName;
+            fileInfo = new FileInfo(string.Format("{0}/launcher/src/main/{1}", projectPath, "embrace-config.json"));
+        }
+#else
+        FileInfo fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", projectPath, "embrace-config.json"));
+#endif
         fileToCopy.CopyTo(fileInfo.FullName);
     }
 }
