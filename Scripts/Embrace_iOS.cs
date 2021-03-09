@@ -191,7 +191,7 @@ namespace EmbraceSDK
             switch (severity)
             {
                 case EMBSeverity.Info:
-                    severityString = "ïnfo";
+                    severityString = "info";
                     break;
                 case EMBSeverity.Warning:
                     severityString = "warning";
