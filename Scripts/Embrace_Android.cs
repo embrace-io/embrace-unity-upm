@@ -41,6 +41,7 @@ namespace EmbraceSDK
         private const string _EndFragmentMethod = "endFragment";
         private const string _ThrowExceptionMethod = "throwException";
         private const string _SetUnityMetaDataMethod = "setUnityMetaData";
+        private const string _enableDebugLoggingMethod = "enableDebugLogging";
 
         // Java Map Reading
         IntPtr CollectionIterator;
@@ -221,8 +222,7 @@ namespace EmbraceSDK
                     embraceSharedInstance.Call(_LogInfoMethod, message, javaMap);
                     break;
                 case EMBSeverity.Warning:
-                    AndroidJavaObject javaBool = new AndroidJavaObject("java.lang.Boolean", allowScreenshot);
-                    embraceSharedInstance.Call(_LogWarningMethod, message, javaMap, javaBool);
+                    embraceSharedInstance.Call(_LogWarningMethod, message, javaMap, allowScreenshot);
                     break;
                 case EMBSeverity.Error:
                     embraceSharedInstance.Call(_LogErrorMethod, message, javaMap, allowScreenshot);
@@ -311,6 +311,12 @@ namespace EmbraceSDK
             AndroidJNI.DeleteLocalRef(iterator);
 
             return dict;
+        }
+
+        public void enableDebugLogging()
+        {
+            if (!ReadyForCalls()) { return; }
+            embraceSharedInstance.Call(_enableDebugLoggingMethod);
         }
     }
 #endif

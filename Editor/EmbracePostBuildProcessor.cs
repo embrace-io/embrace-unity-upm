@@ -26,6 +26,7 @@ public class EmbracePostBuildProcessor : IPostGenerateGradleAndroidProject
 #else
         FileInfo fileInfo = new FileInfo(string.Format("{0}/src/main/{1}", projectPath, "embrace-config.json"));
 #endif
+        Debug.Log("final path: " + fileInfo.FullName + " : " + projectPath);
         fileToCopy.CopyTo(fileInfo.FullName);
     }
 }
@@ -125,7 +126,7 @@ public class EmbracePostBuildProcessor
 }
 #endif
 
-public class EmbracePostBuildProcessorUtils
+    public class EmbracePostBuildProcessorUtils
 {
     public static string BaseDirectory()
     {

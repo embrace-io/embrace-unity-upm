@@ -163,6 +163,11 @@ namespace EmbraceSDK
         {
             Debug.LogFormat("Embrace Unity SDK: Unity Version = {0} GUID = {1}", version, guid);
         }
+
+        public void enableDebugLogging()
+        {
+            Debug.Log("Embrace now in debug logging mode");
+        }
     }
 #endif
 }
