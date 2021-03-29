@@ -9,7 +9,7 @@ namespace EmbraceSDK
         // does not start any montitoring or network calls
         void InitializeSDK();
         // Public API
-        void StareetSDK(bool enableIntegrationTesting);
+        void StartSDK(bool enableIntegrationTesting);
         void EndAppStartup(Dictionary<string, string> properties);
         void SetUserIdentifier(string identifier);
         void ClearUserIdentifier();
