@@ -1,2 +1,1 @@
-# PLACEHOLDER
-Welcome again.
+# Welcome to the Embrace Unity SDK

@@ -1,2 +1,1 @@
-# Welcome
-Refer to [our docs](https://embrace.io/docs/unity/) to get started with Embrace Unity.
+# Welcome to the Embrace Unity SDK
