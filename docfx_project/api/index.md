@@ -1,4 +1,4 @@
-![embrace.io](/images/logo.png)
+![embrace.io](../images/logo.png)
 
 # Embrace Unity SDK
 
