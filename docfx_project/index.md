@@ -1,1 +1,1 @@
-# Welcome to the Embrace Unity SDK
+#Embrace Unity SDK
