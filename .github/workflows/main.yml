@@ -2,10 +2,8 @@ name: CI
 
 # Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow on push events but only for the main branch
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -17,7 +15,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    name: A job to run docfx
+    name: Build and publish Unity API docs
     steps:
     - uses: actions/checkout@v1
     # ...

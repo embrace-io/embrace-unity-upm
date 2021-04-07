@@ -6,6 +6,9 @@
           "src": "../",
           "files": [
             "Scripts/**.cs"
+          ],
+          "exclude": [
+            "Scripts/Embrace_Tests.cs"
           ]
         }
       ],
