@@ -101,7 +101,7 @@ namespace EmbraceSDK
         }
 
         /// <summary>
-        /// Starts instrumentation of the Android application using the Embrace SDK. This should be called during creation of the application, as early as possible.
+        /// Starts instrumentation of the application using the Embrace SDK. This should be called during creation of the application, as early as possible.
         /// See Embrace Docs for integration instructions. For compatibility with other SDKs, the Embrace SDK must be initialized after any other SDK.
         /// </summary>
         /// <param name="enableIntegrationTesting">If true, debug sessions (those which are not part of a release APK) will go to the live integration testing tab of the dashboard. If false, they will appear in 'recent sessions'.</param>
@@ -345,7 +345,7 @@ namespace EmbraceSDK
         }
 
         /// <summary>
-        /// Starts a view. There is a limit to 10 "started" views.
+        /// Opens a view. There is a limit to 10 "started" views.
         /// </summary>
         /// <param name="name">name of the view state as it will show up on our dashboard</param>
         /// <returns>a boolean indicating whether the operation was successful or not</returns>
