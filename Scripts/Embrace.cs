@@ -38,6 +38,7 @@ namespace EmbraceSDK
         bool EndView(string name);
         void Crash();
         void SetMetaData(string version, string guid);
+        void logUnhandledUnityException(string exceptionMessage, string stack);
     }
 
     public enum EMBSeverity
