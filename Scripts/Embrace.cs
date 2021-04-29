@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace EmbraceSDK
 {
@@ -52,6 +53,7 @@ namespace EmbraceSDK
     public class Embrace : MonoBehaviour
     {
         private static Embrace instance = null;
+        private Thread mainThread;
 
         public static Embrace Instance
         {
@@ -95,6 +97,11 @@ namespace EmbraceSDK
             }
         }
 
+        public void Start()
+        {
+            mainThread = Thread.CurrentThread;
+        }
+
         private void NoNullsError()
         {
             Debug.LogError("null is not allowed through the Embrace SDK.");
@@ -109,6 +116,30 @@ namespace EmbraceSDK
         {
             provider.StartSDK(enableIntegrationTesting);
             provider.SetMetaData(Application.unityVersion, Application.buildGUID);
+            Application.logMessageReceived += Embrace_Log_Handler;
+            Application.logMessageReceivedThreaded += Embrace_Threaded_Log_Handler;
+        }
+
+        bool isMainThread()
+        {
+            return mainThread.Equals(Thread.CurrentThread);
+        }
+
+        void Embrace_Threaded_Log_Handler(string message, string stack, LogType type)
+        {
+            if (isMainThread())
+            {
+                return;
+            }
+            Embrace_Log_Handler(message, stack, type);
+        }
+        public void Embrace_Log_Handler(string message, string stack, LogType type)
+        {
+
+            if (type == LogType.Exception || type == LogType.Assert)
+            {
+                provider.logUnhandledUnityException(message, stack);
+            }
         }
 
         /// <summary>
@@ -372,6 +403,13 @@ namespace EmbraceSDK
         public void Crash()
         {
             provider.Crash();
+        }
+
+        public void logUnhandledUnityException(string exceptionMessage, string stack)
+        {
+            if (exceptionMessage == null) { NoNullsError(); return; }
+            if (stack == null) { NoNullsError(); return; }
+            provider.logUnhandledUnityException(exceptionMessage, stack);
         }
     }
 }

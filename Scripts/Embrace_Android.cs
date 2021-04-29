@@ -42,6 +42,7 @@ namespace EmbraceSDK
         private const string _ThrowExceptionMethod = "throwException";
         private const string _SetUnityMetaDataMethod = "setUnityMetaData";
         private const string _enableDebugLoggingMethod = "enableDebugLogging";
+        private const string _logUnhandledUnityExceptionMethod = "logUnhandledUnityException";
 
         // Java Map Reading
         IntPtr CollectionIterator;
@@ -270,6 +271,12 @@ namespace EmbraceSDK
         {
             if (!ReadyForCalls()) { return; }
             embraceSharedInstance.Call(_SetUnityMetaDataMethod, version, guid);
+        }
+
+        void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
+        {
+            if (!ReadyForCalls()) { return; }
+            embraceSharedInstance.Call(_logUnhandledUnityExceptionMethod, exceptionMessage, stack);
         }
 
         private AndroidJavaObject DictionaryToJavaMap(Dictionary<string, string> dictionary)
