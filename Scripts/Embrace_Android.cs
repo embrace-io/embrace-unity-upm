@@ -281,6 +281,12 @@ namespace EmbraceSDK
             embraceSharedInstance.Call(_LogNetworkRequestMethod, url, Embrace.__BridgedHTTPMethod(method), startms, endms, bytesout, bytesin, code, error);
         }
 
+        void IEmbraceProvider.EnableDebugLogging()
+        {
+            if (!ReadyForCalls()) { return; }
+            embraceSharedInstance.Call(_enableDebugLoggingMethod);
+        }
+
         void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
         {
             if (!ReadyForCalls()) { return; }

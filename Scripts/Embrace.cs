@@ -40,6 +40,8 @@ namespace EmbraceSDK
         void SetMetaData(string version, string guid);
         void LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error);
         void logUnhandledUnityException(string exceptionMessage, string stack);
+        // only has effect on Android
+        void EnableDebugLogging();
     }
 
     public enum HTTPMethod
@@ -422,6 +424,11 @@ namespace EmbraceSDK
             if (url == null) { NoNullsError(); return; }
             if (error == null) { NoNullsError(); return; }
             provider.LogNetworkRequest(url, method, startms, endms, bytesin, bytesout, code, error);
+        }
+
+        public void EnableDebugLogging()
+        {
+            provider.EnableDebugLogging();
         }
 
         public void logUnhandledUnityException(string exceptionMessage, string stack)

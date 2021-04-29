@@ -261,6 +261,11 @@ namespace EmbraceSDK
             embrace_sdk_logNetworkRequest(url, Embrace.__BridgedHTTPMethod(method), startms, endms, bytesin, bytesout, code, error);
         }
 
+        void IEmbraceProvider.EnableDebugLogging()
+        {
+            Debug.Log("Embrace Unity SDK: EnableDebugLogging not supported on iOS yet.");
+        }
+
         void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
         {
             embrace_sdk_logUnhandledUnityException(exceptionMessage, stack);
