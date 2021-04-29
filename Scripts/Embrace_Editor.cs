@@ -164,12 +164,12 @@ namespace EmbraceSDK
             Debug.LogFormat("Embrace Unity SDK: Unity Version = {0} GUID = {1}", version, guid);
         }
 
-        public void enableDebugLogging()
         void IEmbraceProvider.LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error)
         {
             Debug.Log("Embrace Unity SDK: Manual Network Request: " + url + " method: " + method + " start: " + startms + " end: " + endms + " bytesin: " + bytesin + " bytesout: " + bytesout + " error: " + error);
         }
 
+        void IEmbraceProvider.EnableDebugLogging()
         {
             Debug.Log("Embrace now in debug logging mode");
         }
