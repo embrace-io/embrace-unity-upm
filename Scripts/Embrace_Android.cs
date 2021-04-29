@@ -41,6 +41,7 @@ namespace EmbraceSDK
         private const string _EndFragmentMethod = "endFragment";
         private const string _ThrowExceptionMethod = "throwException";
         private const string _SetUnityMetaDataMethod = "setUnityMetaData";
+        private const string _LogNetworkRequestMethod = "logNetworkRequest";
         private const string _enableDebugLoggingMethod = "enableDebugLogging";
         private const string _logUnhandledUnityExceptionMethod = "logUnhandledUnityException";
 
@@ -271,6 +272,13 @@ namespace EmbraceSDK
         {
             if (!ReadyForCalls()) { return; }
             embraceSharedInstance.Call(_SetUnityMetaDataMethod, version, guid);
+        }
+
+        void IEmbraceProvider.LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error)
+        {
+            if (!ReadyForCalls()) { return; }
+            Debug.Log("Embrace Unity SDK: Manual Network Request: " + url + " method: " + method + " start: " + startms + " end: " + endms + " bytesin: " + bytesin + " bytesout: " + bytesout + " error: " + error);
+            embraceSharedInstance.Call(_LogNetworkRequestMethod, url, Embrace.__BridgedHTTPMethod(method), startms, endms, bytesout, bytesin, code, error);
         }
 
         void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
