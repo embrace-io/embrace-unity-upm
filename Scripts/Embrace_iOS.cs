@@ -87,6 +87,8 @@ namespace EmbraceSDK
         [DllImport("__Internal")]
         private static extern bool embrace_sdk_setUnityMetaData(string version, string guid);
 
+        [DllImport("__Internal")]
+        private static extern void embrace_sdk_logNetworkRequest(string url, int method, long startms, long endms, int bytesin, int bytesout, int code, string error);
 
         [DllImport("__Internal")]
         private static extern void embrace_sdk_logUnhandledUnityException(string message, string stacktrace);
@@ -253,6 +255,12 @@ namespace EmbraceSDK
             string[] kva = json.Replace("{", string.Empty).Replace("}", string.Empty).Replace("\"", string.Empty).Split(',');
             return kva.ToDictionary(item => item.Split(':')[0], item => item.Split(':')[1]);
         }
+
+        void IEmbraceProvider.LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error)
+        {
+            embrace_sdk_logNetworkRequest(url, Embrace.__BridgedHTTPMethod(method), startms, endms, bytesin, bytesout, code, error);
+        }
+
         void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
         {
             embrace_sdk_logUnhandledUnityException(exceptionMessage, stack);

@@ -38,7 +38,18 @@ namespace EmbraceSDK
         bool EndView(string name);
         void Crash();
         void SetMetaData(string version, string guid);
+        void LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error);
         void logUnhandledUnityException(string exceptionMessage, string stack);
+    }
+
+    public enum HTTPMethod
+    {
+        GET = 0,
+        POST,
+        PUT,
+        DELETE,
+        PATCH,
+        OTHER
     }
 
     public enum EMBSeverity
@@ -406,11 +417,31 @@ namespace EmbraceSDK
             provider.Crash();
         }
 
+        public void LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error)
+        {
+            if (url == null) { NoNullsError(); return; }
+            if (error == null) { NoNullsError(); return; }
+            provider.LogNetworkRequest(url, method, startms, endms, bytesin, bytesout, code, error);
+        }
+
         public void logUnhandledUnityException(string exceptionMessage, string stack)
         {
             if (exceptionMessage == null) { NoNullsError(); return; }
             if (stack == null) { NoNullsError(); return; }
             provider.logUnhandledUnityException(exceptionMessage, stack);
+        }
+
+        public static int __BridgedHTTPMethod(HTTPMethod method)
+        {
+            switch (method)
+            {
+                case HTTPMethod.GET: return 1;
+                case HTTPMethod.POST: return 2;
+                case HTTPMethod.PUT: return 3;
+                case HTTPMethod.DELETE: return 4;
+                case HTTPMethod.PATCH: return 5;
+                default: return 0;
+            }
         }
     }
 }

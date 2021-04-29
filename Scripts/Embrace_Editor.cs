@@ -165,6 +165,11 @@ namespace EmbraceSDK
         }
 
         public void enableDebugLogging()
+        void IEmbraceProvider.LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error)
+        {
+            Debug.Log("Embrace Unity SDK: Manual Network Request: " + url + " method: " + method + " start: " + startms + " end: " + endms + " bytesin: " + bytesin + " bytesout: " + bytesout + " error: " + error);
+        }
+
         {
             Debug.Log("Embrace now in debug logging mode");
         }
