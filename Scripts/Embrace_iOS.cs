@@ -88,6 +88,9 @@ namespace EmbraceSDK
         private static extern bool embrace_sdk_setUnityMetaData(string version, string guid);
 
 
+        [DllImport("__Internal")]
+        private static extern void embrace_sdk_logUnhandledUnityException(string message, string stacktrace);
+
         void IEmbraceProvider.InitializeSDK()
         {
             Debug.Log("Embrace Unity SDK initializing Objc objects");
@@ -249,6 +252,11 @@ namespace EmbraceSDK
         {
             string[] kva = json.Replace("{", string.Empty).Replace("}", string.Empty).Replace("\"", string.Empty).Split(',');
             return kva.ToDictionary(item => item.Split(':')[0], item => item.Split(':')[1]);
+        }
+        void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
+        {
+            embrace_sdk_logUnhandledUnityException(exceptionMessage, stack);
+
         }
     }
 #endif

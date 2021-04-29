@@ -168,6 +168,11 @@ namespace EmbraceSDK
         {
             Debug.Log("Embrace now in debug logging mode");
         }
+
+        void IEmbraceProvider.logUnhandledUnityException(string exceptionMessage, string stack)
+        {
+            Debug.Log("Embrace Unity SDK: Unhandled Exception: " + exceptionMessage + " : stack : " + stack);
+        }
     }
 #endif
 }
