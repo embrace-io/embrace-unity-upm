@@ -27,7 +27,6 @@ namespace EmbraceSDK
         void SetUserPersona(string persona);
         void ClearUserPersona(string persona);
         void ClearAllUserPersonas();
-        void enableDebugLogging();
         bool AddSessionProperty(string key, string value, bool permanent);
         void RemoveSessionProperty(string key);
         Dictionary<string, string> GetSessionProperties();
