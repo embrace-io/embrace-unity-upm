@@ -333,12 +333,6 @@ namespace EmbraceSDK
 
             return dict;
         }
-
-        public void enableDebugLogging()
-        {
-            if (!ReadyForCalls()) { return; }
-            embraceSharedInstance.Call(_enableDebugLoggingMethod);
-        }
     }
 #endif
 }
