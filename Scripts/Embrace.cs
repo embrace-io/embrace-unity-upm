@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿#define EMBRACE_USE_THREADING 
+using UnityEngine;
 using System.Collections.Generic;
+#if EMBRACE_USE_THREADING
 using System.Threading;
+#endif
 
 namespace EmbraceSDK
 {
@@ -131,7 +134,9 @@ namespace EmbraceSDK
             provider.StartSDK(enableIntegrationTesting);
             provider.SetMetaData(Application.unityVersion, Application.buildGUID);
             Application.logMessageReceived += Embrace_Log_Handler;
+#if EMBRACE_USE_THREADING
             Application.logMessageReceivedThreaded += Embrace_Threaded_Log_Handler;
+#endif
         }
 
         bool isMainThread()
@@ -139,6 +144,7 @@ namespace EmbraceSDK
             return mainThread.Equals(Thread.CurrentThread);
         }
 
+#if EMBRACE_USE_THREADING
         void Embrace_Threaded_Log_Handler(string message, string stack, LogType type)
         {
             if (isMainThread())
@@ -147,6 +153,8 @@ namespace EmbraceSDK
             }
             Embrace_Log_Handler(message, stack, type);
         }
+#endif
+
         public void Embrace_Log_Handler(string message, string stack, LogType type)
         {
 
