@@ -94,6 +94,7 @@ namespace EmbraceSDK
         // Called by Unity runtime
         private void Awake()
         {
+            mainThread = Thread.CurrentThread;
             if (instance == null)
             {
                 instance = this;
@@ -111,11 +112,6 @@ namespace EmbraceSDK
             {
                 Destroy(gameObject);
             }
-        }
-
-        public void Start()
-        {
-            mainThread = Thread.CurrentThread;
         }
 
         private void NoNullsError()
