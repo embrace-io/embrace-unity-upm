@@ -264,14 +264,6 @@ namespace EmbraceSDK
         }
 
         /// <summary>
-        /// Enables debug logging.
-        /// </summary>
-        public void enableDebugLogging()
-        {
-            provider.enableDebugLogging();
-        }
-
-        /// <summary>
         /// Clears all custom user personas from the user.
         /// </summary>
         public void ClearAllUserPersonas()
@@ -433,6 +425,9 @@ namespace EmbraceSDK
             provider.LogNetworkRequest(url, method, startms, endms, bytesin, bytesout, code, error);
         }
 
+        /// <summary>
+        /// Enables debug logging.
+        /// </summary>
         public void EnableDebugLogging()
         {
             provider.EnableDebugLogging();
