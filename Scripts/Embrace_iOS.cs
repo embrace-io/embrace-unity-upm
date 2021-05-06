@@ -258,6 +258,9 @@ namespace EmbraceSDK
 
         void IEmbraceProvider.LogNetworkRequest(string url, HTTPMethod method, long startms, long endms, int bytesin, int bytesout, int code, string error)
         {
+            // iOS is expecting seconds, android wants ms.  Dev sends us ms so we will convert to seconds here
+            startms /= 1000;
+            endms /= 1000;
             embrace_sdk_logNetworkRequest(url, Embrace.__BridgedHTTPMethod(method), startms, endms, bytesin, bytesout, code, error);
         }
 
