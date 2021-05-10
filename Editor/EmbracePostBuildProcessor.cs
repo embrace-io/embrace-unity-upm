@@ -84,7 +84,7 @@ public class EmbracePostBuildProcessor
         {
             // Add phase for dSYM upload
             string runScriptName = "Embrace Symbol Upload";
-            string runScriptPhase = "EMBRACE_ID=" + apiKey.AsString() + " EMBRACE_TOKEN=" + apiToken.AsString() + " '" + embraceRunSHFile.FullName + "'";
+            string runScriptPhase = "EMBRACE_ID=" + apiKey.AsString() + " EMBRACE_TOKEN=" + apiToken.AsString() + " \"" + embraceRunSHFile.FullName + "\"";
             string[] phases = project.GetAllBuildPhasesForTarget(targetGuid);
             bool embracePhaseExists = false;
             foreach (var item in phases)
