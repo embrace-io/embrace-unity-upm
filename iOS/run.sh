@@ -54,13 +54,12 @@
 # Use this to specify a custom path to search for framework dSYMs. Most configurations do not require this value to be
 # set.
 
-
-DISABLE_BITCODE_CHECK=
-EMBRACE_FRAMEWORK_SEARCH_DEPTH=
-
 DEFAULT_FRAMEWORK_SEARCH_DEPTH=2
 
-[ -n "$CONFIGURATION_BUILD_DIR" -a -n "$UNLOCALIZED_RESOURCES_FOLDER_PATH" ] && REACT_NATIVE_BUNDLE_PATH_DEFAULT="$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/main.jsbundle"
+UPLOAD_BIN=upload
+UPLOAD_RELATIVE_PATH=EmbraceIO/${UPLOAD_BIN}
+
+[ -n "$CONFIGURATION_BUILD_DIR" ] && [ -n "$UNLOCALIZED_RESOURCES_FOLDER_PATH" ] && REACT_NATIVE_BUNDLE_PATH_DEFAULT="$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/main.jsbundle"
 
 function log () {
     # xcode will mark log lines as warnings and errors if prefixed with the values below. the prefixes are removed and error and warning markers replace them.
@@ -93,9 +92,9 @@ function log_warning () {
 function run() {
     if [ -z "$EMBRACE_DEBUG_DSYM" ] ; then
         # we must redirect both stdout and stderr to /dev/null to have Xcode run this script in the background and move on to other build tasks
-        eval $1 > /dev/null 2>&1 &
+        eval "$1" > /dev/null 2>&1 &
     else
-        eval $1
+        eval "$1"
     fi
 }
 
@@ -147,7 +146,8 @@ function react_native_upload() {
 
     if [ -n "$react_args" ] ; then
         log "uploading react native resources with bundle at ${react_bundle_path} and map at ${react_map_path}"
-        run "\"$DIR\"/upload --app $EMBRACE_ID --token $EMBRACE_TOKEN $react_args"
+        # shellcheck disable=2153
+        run "\"$UPLOAD_BIN_PATH\" --app $EMBRACE_ID --token $EMBRACE_TOKEN $react_args"
     fi
 }
 
@@ -164,29 +164,27 @@ function upload() {
       log_error "Missing BUILD_ROOT environment variable. Are you running this from a build step in XCode? Skipping upload."
       exit 1
     fi
-    cd "$BUILD_ROOT"
+    cd "$BUILD_ROOT" || { log_error "Could not cd to BUILD_ROOT ${BUILD_ROOT}. Exiting." ; return ; }
 
     # if we can't find the files we are looking for with globs, we want nulls
     shopt -s nullglob
 
     # XCode should provide these environment variables, but other CI setups may not provide them
-    if [ -n "$DWARF_DSYM_FILE_NAME" -a -n "$DWARF_DSYM_FOLDER_PATH" ] ; then
+    if [ -n "$DWARF_DSYM_FILE_NAME" ] && [ -n "$DWARF_DSYM_FOLDER_PATH" ] ; then
         app_dsym_path="${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/"
     else
         log "DWARF_DSYM_FILE_NAME and/or DWARF_DSYM_FOLDER_PATH envvars not defined. Attempting to find dSYM file using glob." "warning"
-        app_dsym_path=*/*.dSYM/*/Resources/DWARF/
+        app_dsym_path="*/*.dSYM/*/Resources/DWARF/"
     fi
-
 
     log "Looking for app dSYM in $app_dsym_path"
 
     # Xcode will sometimes not have completed the GenerateDSYMFile step before it runs the upload script, so we allow
     # for a small delay to occur before continuing
-    tries=4
     found=
-    for try in {1..4} ; do
+    for _ in {1..4} ; do
         app_dsym_file=$(find "$app_dsym_path" -type f)
-        [ -n "$app_dsym_file" -a -e "$app_dsym_file" ] && found=1 && break
+        [ -n "$app_dsym_file" ] && [ -e "$app_dsym_file" ] && found=1 && break
         sleep 0.5
     done
 
@@ -198,7 +196,7 @@ function upload() {
         else
           icon_arg=""
         fi
-        run "\"$DIR\"/upload --app $EMBRACE_ID --token $EMBRACE_TOKEN $icon_arg --dsym \"$app_dsym_file\""
+        run "\"$UPLOAD_BIN_PATH\" --app $EMBRACE_ID --token $EMBRACE_TOKEN $icon_arg --dsym \"$app_dsym_file\""
     else
         log_warning "No app dSYM file was found under BUILD_ROOT ${BUILD_ROOT}. Skipping upload."
     fi
@@ -228,7 +226,7 @@ function upload() {
     fi
 
     log "Scanning for framework dSYMs in $framework_search_path"
-    framework_dsyms=$(find "$framework_search_path" -mindepth $framework_search_depth -name "*.dSYM")
+    framework_dsyms=$(find "$framework_search_path" -mindepth "$framework_search_depth" -name "*.dSYM")
     if [ -n "$framework_dsyms" ] ; then
         ORIG_IFS=$IFS
         IFS=$'\n'
@@ -246,11 +244,13 @@ function upload() {
             log "Queueing framework dSYM for upload: $dsym_full_path"
         done
         IFS=$ORIG_IFS
-        run "\"$DIR\"/upload --app $EMBRACE_ID --token $EMBRACE_TOKEN $dsym_args"
+        run "\"$UPLOAD_BIN_PATH\" --app $EMBRACE_ID --token $EMBRACE_TOKEN $dsym_args"
     fi
 }
 
-
+#
+# start of script
+#
 if [ -n "$EMBRACE_DEBUG_DSYM" ] ; then
     log "Debug mode enabled"
     unset EMBRACE_USE_SYSLOG
@@ -260,26 +260,57 @@ else
     log "Set EMBRACE_DEBUG_DSYM=1 to display them in the XCode build logs."
 fi
 
-if [ "$ENABLE_BITCODE" = "YES" -a -z "$DISABLE_BITCODE_CHECK" ] ; then
+if [ "$ENABLE_BITCODE" = "YES" ] && [ -z "$DISABLE_BITCODE_CHECK" ] ; then
     log "\"Enable bitcode\" is set to \"YES\". You will need to download dSYMs from Apple for TestFlight and App Store builds and then upload those dSYMs to Embrace."
 fi
 
-DIR=$(cd "$(dirname "$0")" && pwd -P)
-
-if [ -z "$EMBRACE_ID" ]
-then
+#
+# check that we have the required envvars set
+#
+if [ -z "$EMBRACE_ID" ] ; then
   log_error "Missing EMBRACE_ID environment variable. Skipping upload."
   exit 1
 fi
 
-if [ -z "$EMBRACE_TOKEN" ]
-then
+if [ -z "$EMBRACE_TOKEN" ] ; then
   log_error "Missing EMBRACE_TOKEN environment variable. Skipping upload."
   exit 1
 fi
 
-log "Using app ID ${EMBRACE_ID} and API token ${EMBRACE_TOKEN}"
+#
+# find the upload binary
+#
+UPLOAD_BIN_PATH=
+# try using PODS_ROOT, if set to find the upload binary
+if [ -n "$PODS_ROOT" ] ; then
+    if [ -e "$PODS_ROOT" ]; then
+      UPLOAD_BIN_PATH="$PODS_ROOT"/${UPLOAD_RELATIVE_PATH}
+      log "Used PODS_ROOT to find upload binary at $UPLOAD_BIN_PATH"
+    else
+      log_warning "PODS_ROOT was set to $PODS_ROOT but ${UPLOAD_RELATIVE_PATH} was not found."
+    fi
+fi
 
+# if we have not found the upload binary, fall back on using the script's location to try to find the upload binary
+if [ -z "$UPLOAD_BIN_PATH" ]; then
+  EMBRACE_DIR=$(cd "$(dirname "$0")" && pwd -P)
+  if [ -e "$EMBRACE_DIR"/${UPLOAD_BIN} ] ; then
+    UPLOAD_BIN_PATH="$EMBRACE_DIR"/${UPLOAD_BIN}
+    log "Used script directory to find upload binary at $UPLOAD_BIN_PATH"
+  else
+    log_warning "Did not find upload binary using script directory"
+  fi
+fi
+
+if [ -z "$UPLOAD_BIN_PATH" ] ; then
+  log_error "Could not find path to Embrace dSYM upload binary. Please add EMBRACE_DEBUG_DSYM=1 to the build phase command, re-run the build, and contact Embrace support with the build logs."
+  exit 1
+fi
+
+#
+# start the upload
+#
+log "Using app ID ${EMBRACE_ID} and API token ${EMBRACE_TOKEN}"
 
 # if we have data about the configured debug format, use it. we may not have this setting though if we are running in certain CI environments, so do not exit if it is not set.
 if [ -n "$DEBUG_INFORMATION_FORMAT" ] ; then
