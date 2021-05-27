@@ -7,11 +7,11 @@
       <repository>https://repo.embrace.io/repository/beta</repository>
     </repositories>
     
-    <androidPackage spec="io.embrace:embrace-android-sdk:4.8.7">
+    <androidPackage spec="io.embrace:embrace-android-sdk:4.8.10">
     </androidPackage>
-    <androidPackage spec="io.embrace:embrace-android-okhttp3:4.8.7">
+    <androidPackage spec="io.embrace:embrace-android-okhttp3:4.8.10">
     </androidPackage>
-    <androidPackage spec="io.embrace:embrace-android-volley:4.8.7">
+    <androidPackage spec="io.embrace:embrace-android-volley:4.8.10">
     </androidPackage>
     <androidPackage spec="net.sourceforge.streamsupport:android-retrostreams:1.6.3">
     </androidPackage>

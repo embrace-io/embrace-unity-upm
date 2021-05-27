@@ -2,12 +2,16 @@
 using UnityEngine.Android;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace EmbraceSDK
 {
 #if UNITY_ANDROID
     public class Embrace_Android : IEmbraceProvider
     {
+        [DllImport("libembrace-native")]
+        private static extern bool emb_jniIsAttached();
+
         private AndroidJavaObject embraceSharedInstance;
         private AndroidJavaObject applicationInstance;
         private AndroidJavaObject unityAppFramework;
@@ -83,6 +87,10 @@ namespace EmbraceSDK
             {
                 Debug.LogError("Embrace Unity SDK did not initialize, ensure the prefab is added to the scene.");
                 result = false;
+            }
+            if (result == true && emb_jniIsAttached() == false)
+            {
+                AndroidJNI.AttachCurrentThread();
             }
             return result;
         }
