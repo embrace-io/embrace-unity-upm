@@ -9,7 +9,7 @@ namespace EmbraceSDK
 #if UNITY_ANDROID
     public class Embrace_Android : IEmbraceProvider
     {
-        [DllImport("libembrace-native")]
+        [DllImport("embrace-native")]
         private static extern bool emb_jniIsAttached();
 
         private AndroidJavaObject embraceSharedInstance;
