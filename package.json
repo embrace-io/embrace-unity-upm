@@ -1,7 +1,7 @@
 {
     "name": "io.embrace.unity",
     "displayName": "Embrace Unity SDK",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "unity": "2018.4",
     "description": "Embrace Unity SDK",
     "author": {
